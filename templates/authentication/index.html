@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteMess CMS | Premium Mess Management System</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <style>
+        :root {
+            --hero-bg: radial-gradient(circle at 0% 0%, #4f46e5 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #38bdf8 0%, transparent 50%),
+                #0f172a;
+        }
+
+        body {
+            background: var(--hero-bg);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            padding: 4rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom right, #fff 30%, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .tech-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            margin-top: 6rem;
+            text-align: left;
+            align-items: center;
+        }
+
+        .profile-img {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 2rem;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .social-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-tag {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav
+        style="position: absolute; top: 0; width: 100%; padding: 2rem; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; left: 50%; transform: translateX(-50%); z-index: 10;">
+        <div style="font-weight: 800; font-size: 1.5rem;">EliteMess CMS</div>
+        <a href="{% url 'authentication:login' %}" class="btn btn-primary" style="padding: 0.75rem 2rem;">Enter
+            Portal</a>
+    </nav>
+
+    <section class="hero-section">
+        <span class="badge">🚀 Smart Management System</span>
+        <h1 class="hero-title">Elevating Professional<br>Mess Management</h1>
+        <p
+            style="font-size: 1.25rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 3rem; line-height: 1.6;">
+            A high-performance CMS engineered with Django and PostgreSQL, featuring automated Excel-based billing,
+            real-time attendance tracking, and premium glassmorphism dashboards.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+            <a href="{% url 'authentication:login' %}" class="btn btn-primary"
+                style="padding: 1rem 3rem; font-size: 1.1rem;">Launch System</a>
+            <a href="#developer" class="btn"
+                style="border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); padding: 1rem 3rem; font-size: 1.1rem;">About
+                Developer</a>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <img src="https://www.vectorlogo.zone/logos/python/python-icon.svg" alt="Python"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                <p style="margin-top: 0.5rem; font-weight: 700;">Python 3.12</p>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Core Backend</p>
+            </div>
+            <div class="tech-card">
+                <img src="https://www.vectorlogo.zone/logos/djangoproject/djangoproject-icon.svg" alt="Django"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                <p style="margin-top: 0.5rem; font-weight: 700;">Django</p>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Full-stack MVT</p>
+            </div>
+            <div class="tech-card">
+                <img src="https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg" alt="PostgreSQL"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                <p style="margin-top: 0.5rem; font-weight: 700;">PostgreSQL</p>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Relational DB</p>
+            </div>
+            <div class="tech-card">
+                <img src="https://img.icons8.com/color/48/pandas.png" alt="Pandas"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                <p style="margin-top: 0.5rem; font-weight: 700;">Pandas</p>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Excel Parsing</p>
+            </div>
+            <div class="tech-card">
+                <span style="font-size: 1.5rem;">✨</span>
+                <p style="margin-top: 0.5rem; font-weight: 700;">Glassmorphism</p>
+                <p style="font-size: 0.75rem; color: var(--text-secondary);">Modern CSS3</p>
+            </div>
+        </div>
+
+        <div id="developer" class="profile-container">
+            <div>
+                <img src="{% static 'images/profile5.png' %}" alt="Sarang Wagh" class="profile-img"
+                    onerror="this.src='https://ui-avatars.com/api/?name=Sarang+Wagh&background=0D8ABC&color=fff&size=512'">
+            </div>
+            <div class="glass-card" style="margin: 0; text-align: left; padding: 3rem;">
+                <span class="feature-tag">Developer Profile</span>
+                <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Sarang Wagh</h2>
+                <p style="font-weight: 600; color: var(--accent-blue); margin-bottom: 1.5rem;">BE in Computer Science &
+                    Design</p>
+
+                <div style="border-left: 2px solid var(--accent-blue); padding-left: 1.5rem; margin-bottom: 2rem;">
+                    <p style="font-size: 0.95rem; line-height: 1.8; color: var(--text-secondary);">
+                        A passionate Full-Stack Developer focused on building high-performance web applications.
+                        Graduated from <strong>Vithalrao Vikhe Patil College of Engineering, Ahilyanagar</strong>.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <a href="https://linkedin.com/in/sarang-wagh" target="_blank" class="social-link">LinkedIn
+                        &rarr;</a>
+                    <a href="https://github.com/sarangwagh04" target="_blank" class="social-link">GitHub &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 8rem; padding-bottom: 4rem;">
+            <div class="glass-card"
+                style="background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(56, 189, 248, 0.05));">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem;">Technical Core Features</h3>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; text-align: left;">
+                    <div>
+                        <h4 style="color: var(--accent-blue); margin-bottom: 0.75rem;">Automated Billing Logic</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">Uses Pandas to
+                            parse Excel attendance logs, calculating bills at ₹100/day per student with dynamic QR
+                            generation.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-blue); margin-bottom: 0.75rem;">Role-Based Security</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">Sophisticated
+                            redirection system using Django's is_staff flags to provide unique dashboards for students
+                            and staff.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-blue); margin-bottom: 0.75rem;">Recruiter First UX</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">Custom error
+                            handling with Toast notify, glassmorphism design system, and streamlined quick-login
+                            shortcuts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer
+        style="text-align: center; color: var(--text-secondary); padding: 4rem 1rem; font-size: 0.875rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        &copy; EliteMess CMS by Sarang Wagh.
+    </footer>
+
+</body>
+
+</html>

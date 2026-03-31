@@ -1,12 +1,12 @@
-from django.db import models
-
-# Create your models here.
-
+# suggestions/models.py
 
 from django.db import models
 from django.contrib.auth.models import User
 
 class Suggestion(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    suggestion_text = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suggestions')
+    text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Suggestion by {self.user.username} at {self.created_at}"

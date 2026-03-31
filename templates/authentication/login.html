@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EliteMess CMS</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <style>
+        .shortcut-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .shortcut-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .shortcut-card:hover {
+            background: rgba(79, 70, 229, 0.2);
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+        }
+
+        .shortcut-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .shortcut-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body class="auth-wrapper">
+
+    <div class="glass-card auth-card" style="max-width: 500px;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div
+                style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-color), var(--accent-blue)); border-radius: 1.5rem; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                <span style="font-size: 2.5rem; font-weight: 900; color: white;">E</span>
+            </div>
+            <h2 style="margin: 0; letter-spacing: -0.02em;">EliteMess CMS</h2>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">Secure Mess Management
+                Portal</p>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem; font-size: 0.875rem;">{{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form id="loginForm" method="post" action="{% url 'authentication:login' %}">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="User ID">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login Securely</button>
+        </form>
+
+        <p
+            style="text-align: center; color: var(--text-secondary); font-size: 0.75rem; margin-top: 2rem; text-transform: uppercase; letter-spacing: 0.1em;">
+            Quick Access</p>
+
+        <div class="shortcut-container">
+            <div class="shortcut-card" onclick="quickLogin('admin', 'Pass123')">
+                <span class="shortcut-icon">🔑</span>
+                <span class="shortcut-label">Admin</span>
+            </div>
+            <div class="shortcut-card" onclick="quickLogin('mess_owner', 'Pass123')">
+                <span class="shortcut-icon">👨‍🍳</span>
+                <span class="shortcut-label">Staff</span>
+            </div>
+            <div class="shortcut-card" onclick="quickLogin('student', 'Pass123')">
+                <span class="shortcut-icon">🎓</span>
+                <span class="shortcut-label">Student</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function quickLogin(user, pass) {
+            document.getElementById('username').value = user;
+            document.getElementById('password').value = pass;
+            // Add a small delay for visual feedback
+            const cards = document.querySelectorAll('.shortcut-card');
+            cards.forEach(c => c.style.opacity = '0.5');
+            setTimeout(() => {
+                document.getElementById('loginForm').submit();
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>

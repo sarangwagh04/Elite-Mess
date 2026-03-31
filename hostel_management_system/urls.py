@@ -16,11 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home_page, name='home'),  # Define the URL pattern for the home page
-    path('authentication/', include('authentication.urls')),
-    path('billing/', include('billing.urls')),
+    path('', include('authentication.urls')), # login is here
+    path('', include('billing.urls')), # student_dashboard and staff_dashboard are here
+    path('suggestions/', include('suggestions.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_address=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_address=settings.STATIC_ROOT)

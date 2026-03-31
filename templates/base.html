@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteMess CMS | {% block title %}Management{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    {% block extra_css %}{% endblock %}
+    <style>
+        /* EliteMess Toast System */
+        #toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+        .toast {
+            min-width: 300px;
+            padding: 1rem 1.5rem;
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 0.5rem;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast-info { border-left-color: var(--accent-blue); }
+        .toast-success { border-left-color: var(--success); }
+        .toast-error { border-left-color: var(--error); }
+        .toast-warning { border-left-color: #fbbf24; }
+        
+        .toast-close {
+            cursor: pointer;
+            opacity: 0.5;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        .toast-close:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <nav class="dashboard-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+        <h2 style="margin: 0; background: linear-gradient(to right, #38bdf8, #4f46e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">EliteMess CMS</h2>
+        <div>
+            {% if user.is_authenticated %}
+                <span style="color: var(--text-secondary); margin-right: 1rem;">Welcome, {{ user.username }}</span>
+                <a href="{% url 'authentication:logout' %}" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Logout</a>
+            {% else %}
+                <a href="{% url 'authentication:login' %}" style="color: var(--accent-blue); text-decoration: none; font-weight: 600; margin-right: 1rem;">Login</a>
+                <a href="{% url 'authentication:register' %}" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="text-align: center; color: var(--text-secondary); padding: 2rem 0; font-size: 0.875rem;">
+        &copy; 2026 EliteMess CMS. Premium Edition.
+    </footer>
+
+    <script>
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            // Support Django's 'error' and 'success' tags as CSS classes
+            const toastType = type === 'error' ? 'error' : (type === 'success' ? 'success' : 'info');
+            toast.className = `toast toast-${toastType}`;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <span class="toast-close" onclick="this.parentElement.remove()">&times;</span>
+            `;
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Auto remove after 5s
+            setTimeout(() => {
+                if(toast.parentElement) {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Map Django messages to Toasts on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            {% if messages %}
+                {% for message in messages %}
+                    showToast("{{ message|escapejs }}", "{{ message.tags }}");
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

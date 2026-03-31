@@ -1,22 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h2>Welcome to the Hostel Management System</h2>
-    <div>
-        <h3>Suggestions</h3>
-        <p>Provide your suggestions and feedback here:</p>
-        <a href="{% url 'suggestions:submit' %}">Submit a Suggestion</a>
-        <a href="{% url 'suggestions:view' %}">View Suggestions</a>
-    </div>
-    <div>
-        <h3>Billing</h3>
-        <p>Manage billing and payments:</p>
-        <a href="{% url 'billing:attendance' %}">Mark Attendance</a>
-        <a href="{% url 'billing:payments' %}">View Payments</a>
+    <div class="container">
+        <h2>Welcome to the Hostel Management System</h2>
+        <div>
+            <h3>Suggestions</h3>
+            <p style="color: #555;">Provide your suggestions and feedback here:</p>
+            <a href="{% url 'suggestions:submit' %}" class="btn">Submit a Suggestion</a><br>
+            <a href="{% url 'suggestions:view' %}" class="btn">View Suggestions</a>
+        </div>
+        <div style="margin-top: 20px;">
+            <h3>Billing</h3>
+            <p style="color: #555;">Manage billing and payments:</p>
+            <a href="{% url 'billing:mark_attendance' %}" class="btn">Mark Attendance</a><br>
+            <a href="#">View Payments</a>
+        </div>
     </div>
 </body>
 </html>

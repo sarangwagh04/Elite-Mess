@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}EliteMess Staff Console{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="glass-card stat-card">
+        <span class="stat-value">{{ pending_payments.count }}</span>
+        <span class="stat-label">Pending Verifications</span>
+    </div>
+    <div class="glass-card stat-card">
+        <span class="stat-value">{{ feedbacks.count }}</span>
+        <span class="stat-label">Feedbacks Overall</span>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Column 1: Payments & Feedback -->
+    <div>
+        <div class="glass-card" style="margin-bottom: 2.5rem;">
+            <h3>Verify Student Payments</h3>
+            <div style="max-height: 600px; overflow-y: auto;">
+                {% for payment in pending_payments %}
+                <div class="glass-card" style="padding: 1.5rem; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 1.5rem; align-items: center;">
+                        <div style="width: 150px; height: 150px; background: #000; border-radius: 0.75rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                            <a href="{{ payment.screenshot.url }}" target="_blank">
+                                <img src="{{ payment.screenshot.url }}" alt="Receipt" style="width: 100%; height: 100%; object-fit: cover;">
+                            </a>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <h4 style="margin: 0;">{{ payment.student.username }}</h4>
+                            <p style="color: var(--accent-blue); font-weight: 800; font-size: 1.5rem; margin: 0.5rem 0;">₹{{ payment.summary.bill_amount }}</p>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Status: <span style="background: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 4px;">{{ payment.status }}</span></p>
+                            <p style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.5rem;">Uploaded: {{ payment.created_at|date:"M d, H:i" }}</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <form method="post" action="{% url 'billing:approve_payment' payment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="approve" class="btn btn-success" style="width: 100%;">Mark Paid ✅</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-primary" style="width: 100%; background: #444; border: 1px solid var(--error); color: var(--error);">Reject ❌</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: var(--text-secondary); padding: 3rem;">All clear! No pending payments at the moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3>Mess Feedbacks (Anonymous)</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+                {% for feedback in feedbacks %}
+                <div class="glass-card" style="background: rgba(15, 23, 42, 0.4); padding: 1rem; border: none;">
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                         {{ feedback.created_at|date:"M d, H:i" }}
+                    </div>
+                    <div style="font-size: 1rem; line-height: 1.5;">{{ feedback.text }}</div>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-secondary); text-align: center; grid-column: span 3;">Nothing here yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Column 2: Admin Tools -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <div class="glass-card" style="border-top: 4px solid var(--accent-blue);">
+            <h3>📊 Attendance Central</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">Upload monthly attendance logs (Excel) to generate bills.</p>
+            <form method="post" action="{% url 'billing:upload_attendance' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="excel_file">Select Attendance File (.xlsx)</label>
+                    <input type="file" name="excel_file" id="excel_file" accept=".xlsx" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Calculate & Process Bills</button>
+            </form>
+            <div style="margin-top: 1rem; text-align: center;">
+                <a href="/media/attendance_template.xlsx" style="font-size: 0.75rem; color: var(--accent-blue);">Download Template 📥</a>
+            </div>
+        </div>
+
+        <div class="glass-card" style="border-top: 4px solid var(--primary-color);">
+            <h3>🥪 Daily Menu Editor</h3>
+            <form method="post" action="{% url 'billing:update_menu' %}">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="day">Day of the Week</label>
+                    <select name="day" id="day">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="breakfast">Breakfast</label>
+                    <input type="text" name="breakfast" required placeholder="Milk, Bread, Poha...">
+                </div>
+                <div class="input-group">
+                    <label for="lunch">Lunch</label>
+                    <input type="text" name="lunch" required placeholder="Daal, Rice, Roti...">
+                </div>
+                <div class="input-group">
+                    <label for="dinner">Dinner</label>
+                    <input type="text" name="dinner" required placeholder="Sabji, Rice, Kheer...">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Daily Menu</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

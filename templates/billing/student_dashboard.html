@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<!-- Section 1: Weekly Menu (Full Width) -->
+<div class="glass-card" style="margin-bottom: 2rem;">
+    <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <span>🍽️</span> Weekly Mess Menu
+    </h3>
+    <div style="overflow-x: auto;">
+        <table class="menu-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in menu %}
+                <tr>
+                    <td style="font-weight: 700; color: var(--accent-blue);">{{ item.day }}</td>
+                    <td>{{ item.breakfast }}</td>
+                    <td>{{ item.lunch }}</td>
+                    <td>{{ item.dinner }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Mess menu will be updated soon. Stay tuned!</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 2: Feedback (Anonymous Board) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div class="glass-card">
+        <h3>Share Your Feedback</h3>
+        <form method="post" action="{% url 'suggestions:submit' %}">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="text">How was the food today?</label>
+                <textarea name="text" id="text" rows="5" placeholder="Your feedback will be displayed anonymously..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Feedback</button>
+        </form>
+    </div>
+
+    <div class="glass-card">
+        <h3>Recent Feedback</h3>
+        <div style="max-height: 350px; overflow-y: auto; padding-right: 1rem;">
+            {% for feedback in feedbacks %}
+            <div class="glass-card" style="background: rgba(15, 23, 42, 0.4); padding: 1rem; border: none; margin-bottom: 1rem;">
+                <div class="feedback-meta" style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    {% if user.is_superuser %}{{ feedback.user.username }} | {% endif %}
+                    {{ feedback.created_at|date:"M d, H:i" }}
+                </div>
+                <div style="font-size: 0.95rem; line-height: 1.5;">{{ feedback.text }}</div>
+            </div>
+            {% empty %}
+            <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No feedback board activity yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Mess Bill (2 Columns) -->
+<div class="glass-card">
+    <h3 style="margin-bottom: 1.5rem;">💳 Mess Bill & Payment</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+        
+        <!-- Column 1: QR & Status -->
+        <div style="text-align: center;">
+            <div style="background: white; padding: 1.5rem; border-radius: 1.5rem; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+                {% if summary %}
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=UPI://pay?tm=EliteMess%20Bill&am={{ summary.bill_amount }}" alt="Payment QR">
+                    <div style="color: #000; margin-top: 1rem;">
+                        <span style="font-size: 0.875rem; display: block; opacity: 0.7;">Current Month Bill</span>
+                        <span style="font-size: 1.5rem; font-weight: 800;">₹{{ summary.bill_amount }}</span>
+                    </div>
+                {% else %}
+                    <div style="width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; color: #333;">
+                        <span style="font-size: 0.875rem; text-align: center;">Bill not generated<br>(Pending Attendance)</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem; text-transform: uppercase;">Payment Status</p>
+                {% if last_payment %}
+                    <span class="btn" style="background: {% if last_payment.status == 'PAID' %}var(--success){% elif last_payment.status == 'REJECTED' %}var(--error){% else %}var(--primary-color){% endif %}; cursor: default; width: 80%;">
+                        {{ last_payment.status }}
+                    </span>
+                {% else %}
+                    <span class="btn" style="background: #444; opacity: 0.5; cursor: default; width: 80%;">NO RECORD</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Column 2: Upload & Attendance -->
+        <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 2rem;">
+            <div style="margin-bottom: 2rem;">
+                <h4>Upload Payment Receipt</h4>
+                <form method="post" action="{% url 'billing:submit_payment' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="file" name="screenshot" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Click to Upload Receipt</button>
+                </form>
+            </div>
+
+            <div class="glass-card" style="background: rgba(0,0,0,0.3); border: none;">
+                <h4>Attendance Summary</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 2rem; font-weight: 800; color: var(--success);">
+                            {% if summary %}{{ summary.total_present_days }}{% else %}0{% endif %}
+                        </span>
+                        <span style="color: var(--text-secondary);"> Days Present</span>
+                    </div>
+                    <div style="text-align: right; font-size: 0.875rem; color: var(--text-secondary);">
+                        {{ now|date:"F Y" }}
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Calendar View (Present Days Marked)</p>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; text-align: center; font-size: 0.7rem;">
+                        {% for day_num in "1234567890123456789012345678901"|make_list %}
+                            {% with forloop.counter as d %}
+                                <div style="padding: 0.25rem; border-radius: 4px; 
+                                    {% if d in present_days %}
+                                        background: var(--success); color: white; font-weight: 800;
+                                    {% else %}
+                                        background: rgba(255,255,255,0.05);
+                                    {% endif %}">
+                                    {{ d }}
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                    <p style="font-size: 0.7rem; margin-top: 0.5rem; font-style: italic;">Note: Attendance is processed monthly via automated logs.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
